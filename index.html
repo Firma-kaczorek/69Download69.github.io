@@ -1,1 +1,55 @@
-TEST
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zapisywanie i Odczytywanie Danych</title>
+</head>
+<body>
+    <h1>Wprowadź Informacje</h1>
+    <form id="dataForm">
+        <label for="dataInput">Wiadomość:</label><br>
+        <input type="text" id="dataInput" name="data"><br><br>
+        <button type="button" onclick="sendData()">Wyślij</button>
+    </form>
+
+    <h2>Odebrane Informacje:</h2>
+    <div id="receivedData"></div>
+
+    <script>
+        async function sendData() {
+            const dataInput = document.getElementById('dataInput');
+            const data = dataInput.value;
+
+            const response = await fetch('/save_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ data: data }),
+            });
+
+            if (response.ok) {
+                dataInput.value = ''; // Wyczyść pole po wysłaniu
+                fetchData(); // Odśwież wyświetlone dane
+            } else {
+                alert('Wystąpił błąd podczas wysyłania danych.');
+            }
+        }
+
+        async function fetchData() {
+            const response = await fetch('/get_data');
+            if (response.ok) {
+                const data = await response.json();
+                const receivedDataDiv = document.getElementById('receivedData');
+                receivedDataDiv.innerHTML = `<p>Ostatnio odebrane: ${data.last_data || 'Brak danych'}</p>`;
+            } else {
+                console.error('Wystąpił błąd podczas pobierania danych.');
+            }
+        }
+
+        // Pobierz dane przy załadowaniu strony
+        window.onload = fetchData;
+    </script>
+</body>
+</html>
