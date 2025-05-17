@@ -14,41 +14,54 @@
     </form>
 
     <h2>Odebrane Informacje:</h2>
-    <div id="receivedData"></div>
+    <div id="receivedData">Brak danych</div>
 
     <script>
         async function sendData() {
             const dataInput = document.getElementById('dataInput');
-            const data = dataInput.value;
+            const data = dataInput.value.trim();
 
-            const response = await fetch('/save_data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data: data }),
-            });
+            if (!data) {
+                alert("Wpisz wiadomość przed wysłaniem.");
+                return;
+            }
 
-            if (response.ok) {
-                dataInput.value = ''; // Wyczyść pole po wysłaniu
-                fetchData(); // Odśwież wyświetlone dane
-            } else {
-                alert('Wystąpił błąd podczas wysyłania danych.');
+            try {
+                const response = await fetch('/save_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ data }),
+                });
+
+                if (response.ok) {
+                    dataInput.value = ''; // Wyczyść pole po wysłaniu
+                    fetchData(); // Odśwież dane
+                } else {
+                    alert('Wystąpił błąd podczas wysyłania danych.');
+                }
+            } catch (error) {
+                console.error('Błąd połączenia:', error);
+                alert('Nie udało się połączyć z serwerem.');
             }
         }
 
         async function fetchData() {
-            const response = await fetch('/get_data');
-            if (response.ok) {
-                const data = await response.json();
-                const receivedDataDiv = document.getElementById('receivedData');
-                receivedDataDiv.innerHTML = `<p>Ostatnio odebrane: ${data.last_data || 'Brak danych'}</p>`;
-            } else {
-                console.error('Wystąpił błąd podczas pobierania danych.');
+            try {
+                const response = await fetch('/get_data');
+                if (response.ok) {
+                    const data = await response.json();
+                    const receivedDataDiv = document.getElementById('receivedData');
+                    receivedDataDiv.innerHTML = `<p>Ostatnio odebrane: ${data.last_data || 'Brak danych'}</p>`;
+                } else {
+                    console.error('Błąd serwera przy pobieraniu danych.');
+                }
+            } catch (error) {
+                console.error('Błąd połączenia przy pobieraniu danych:', error);
             }
         }
 
-        // Pobierz dane przy załadowaniu strony
         window.onload = fetchData;
     </script>
 </body>
