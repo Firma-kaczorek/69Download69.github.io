@@ -2,18 +2,10 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <title>Automatyczne pobieranie PDF</title>
+  <title>Pobieranie pliku</title>
+  <meta http-equiv="refresh" content="0; url=konkurs.pdf" />
 </head>
 <body>
-  <h1>Twój plik zostanie zaraz pobrany...</h1>
-
-  <script>
-    const link = document.createElement('a');
-    link.href = 'konkurs.pdf';      // plik w tym samym folderze
-    link.download = 'konkurs.pdf';  // nazwa pliku do pobrania
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  </script>
+  <p>Jeśli pobieranie się nie zacznie, <a href="konkurs.pdf">kliknij tutaj</a>.</p>
 </body>
 </html>
