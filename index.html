@@ -1,68 +1,19 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zapisywanie i Odczytywanie Danych</title>
+  <meta charset="UTF-8" />
+  <title>Automatyczne pobieranie PDF</title>
 </head>
 <body>
-    <h1>Wprowadź Informacje</h1>
-    <form id="dataForm">
-        <label for="dataInput">Wiadomość:</label><br>
-        <input type="text" id="dataInput" name="data"><br><br>
-        <button type="button" onclick="sendData()">Wyślij</button>
-    </form>
+  <h1>Twój plik zostanie zaraz pobrany...</h1>
 
-    <h2>Odebrane Informacje:</h2>
-    <div id="receivedData">Brak danych</div>
-
-    <script>
-        async function sendData() {
-            const dataInput = document.getElementById('dataInput');
-            const data = dataInput.value.trim();
-
-            if (!data) {
-                alert("Wpisz wiadomość przed wysłaniem.");
-                return;
-            }
-
-            try {
-                const response = await fetch('/save_data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ data }),
-                });
-
-                if (response.ok) {
-                    dataInput.value = ''; // Wyczyść pole po wysłaniu
-                    fetchData(); // Odśwież dane
-                } else {
-                    alert('Wystąpił błąd podczas wysyłania danych.');
-                }
-            } catch (error) {
-                console.error('Błąd połączenia:', error);
-                alert('Nie udało się połączyć z serwerem.');
-            }
-        }
-
-        async function fetchData() {
-            try {
-                const response = await fetch('/get_data');
-                if (response.ok) {
-                    const data = await response.json();
-                    const receivedDataDiv = document.getElementById('receivedData');
-                    receivedDataDiv.innerHTML = `<p>Ostatnio odebrane: ${data.last_data || 'Brak danych'}</p>`;
-                } else {
-                    console.error('Błąd serwera przy pobieraniu danych.');
-                }
-            } catch (error) {
-                console.error('Błąd połączenia przy pobieraniu danych:', error);
-            }
-        }
-
-        window.onload = fetchData;
-    </script>
+  <script>
+    const link = document.createElement('a');
+    link.href = 'konkurs.pdf';      // plik w tym samym folderze
+    link.download = 'konkurs.pdf';  // nazwa pliku do pobrania
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  </script>
 </body>
 </html>
